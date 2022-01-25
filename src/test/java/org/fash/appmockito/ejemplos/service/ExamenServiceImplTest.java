@@ -118,7 +118,6 @@ class ExamenServiceImplTest {
                 examen.setId(secuencia++);
                 return examen;
             }
-
         });
 
         //When
@@ -133,5 +132,17 @@ class ExamenServiceImplTest {
         verify(preguntaRepository).guardarVarias(anyList());
     }
 
+    @Test
+    void testManejoException() {
+        //Given
+        when(repository.findAll()).thenReturn(Datos.EXAMENES_ID_NULL);
+        when(preguntaRepository.findPreguntasPorExamenId(isNull())).thenThrow(IllegalArgumentException.class);
 
+        assertThrows(IllegalArgumentException.class, ()->{
+            service.findExamenPorNombreConPreguntas("Matematicas");
+        });
+        verify(repository).findAll();
+        verify(preguntaRepository).findPreguntasPorExamenId(isNull());
+
+    }
 }
