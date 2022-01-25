@@ -6,10 +6,7 @@ import org.fash.appmockito.ejemplos.repository.PreguntaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
@@ -131,7 +128,6 @@ class ExamenServiceImplTest {
         verify(repository).guardar(any(Examen.class));
         verify(preguntaRepository).guardarVarias(anyList());
     }
-
     @Test
     void testManejoException() {
         //Given
@@ -143,6 +139,20 @@ class ExamenServiceImplTest {
         });
         verify(repository).findAll();
         verify(preguntaRepository).findPreguntasPorExamenId(isNull());
-
     }
+
+    @Test
+    void testArgumentMatchers() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        verify(repository).findAll();
+        //verify(preguntaRepository).findPreguntasPorExamenId(eq(5L));
+        verify(preguntaRepository).findPreguntasPorExamenId(argThat(arg -> arg.equals(5L) ));
+    }
+
+
+
 }
