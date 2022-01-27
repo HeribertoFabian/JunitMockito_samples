@@ -31,6 +31,9 @@ class ExamenServiceImplTest {
     @InjectMocks
     ExamenServiceImpl service;
 
+    @Captor
+    ArgumentCaptor<Long> captor;
+
 
 
     @BeforeEach
@@ -181,6 +184,16 @@ class ExamenServiceImplTest {
         }
     }
 
+    @Test
+    void testArgumentCaptor() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        //when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
 
+        service.findExamenPorNombreConPreguntas("Matematicas");
 
+        //ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class); //Se comenta para usar anotaciones
+        verify(preguntaRepository).findPreguntasPorExamenId(captor.capture());
+
+        assertEquals(5L, captor.getValue());
+    }
 }
