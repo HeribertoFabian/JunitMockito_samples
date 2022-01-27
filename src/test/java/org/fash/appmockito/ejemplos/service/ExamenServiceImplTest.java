@@ -153,6 +153,34 @@ class ExamenServiceImplTest {
         verify(preguntaRepository).findPreguntasPorExamenId(argThat(arg -> arg.equals(5L) ));
     }
 
+    @Test
+    void testArgumentMatchersWithNestedAclass() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES_ID_NEGATIVOS);
+        when(preguntaRepository.findPreguntasPorExamenId(anyLong())).thenReturn(Datos.PREGUNTAS);
+
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        verify(repository).findAll();
+        //El uso de una clase anonima nos permite personalizar el mensaje de error
+        verify(preguntaRepository).findPreguntasPorExamenId(argThat(new MiArgsMatchers()));
+    }
+
+    public static class MiArgsMatchers  implements ArgumentMatcher<Long>{
+
+        private Long argument;
+
+        @Override
+        public boolean matches(Long argument) {
+            this.argument = argument;
+            return argument != null && argument > 0;
+        }
+
+        @Override
+        public String toString(){
+            return "Mensaje: " + this.argument + " debe ser un entero positivo";
+        }
+    }
+
 
 
 }
