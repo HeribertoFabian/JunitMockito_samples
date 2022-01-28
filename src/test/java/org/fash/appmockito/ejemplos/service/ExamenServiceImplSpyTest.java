@@ -77,6 +77,36 @@ class ExamenServiceImplSpyTest {
         inOrder.verify(repository).findAll();
         inOrder.verify(preguntaRepository).findPreguntasPorExamenId(6L);
     }
+
+    @Test
+    void testNumeroDeInvocaciones() {
+        when(repository.findAll()).thenReturn(Datos.EXAMENES);
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        verify(preguntaRepository).findPreguntasPorExamenId(5L);
+        verify(preguntaRepository, times(1)).findPreguntasPorExamenId(5L);
+        verify(preguntaRepository, atLeast(1)).findPreguntasPorExamenId(5L);
+        verify(preguntaRepository, atLeastOnce()).findPreguntasPorExamenId(5L);
+        verify(preguntaRepository, atMost(1)).findPreguntasPorExamenId(5L);
+        verify(preguntaRepository, atMostOnce()).findPreguntasPorExamenId(5L);
+
+
+    }
+
+    @Test
+    void testNumeroInvocaciones2() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        service.findExamenPorNombreConPreguntas("Matematicas");
+
+        verify(preguntaRepository, never()).findPreguntasPorExamenId(5L);
+        verifyNoInteractions(preguntaRepository);
+
+        verify(repository, times(1)).findAll();
+        verify(repository, atLeastOnce()).findAll();
+        verify(repository, atLeast(1)).findAll();
+        verify(repository, atMost(1)).findAll();
+        verify(repository, atMostOnce()).findAll();
+    }
 }
 
 
