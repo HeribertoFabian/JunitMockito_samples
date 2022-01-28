@@ -1,4 +1,4 @@
-package org.fash.appmockito.ejemplos.service;
+package org.fash.appmockito.ejemplos.constants;
 
 import org.fash.appmockito.ejemplos.models.Examen;
 
